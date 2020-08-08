@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/quiz_brain.dart';
+
+QuizBrain quizBrain = new QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -25,6 +28,9 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> iconsList = [];
+  int scoreKeeper = 0;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +43,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -61,7 +67,10 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
+                setState(() {
+                  checkAnswer(true);
+                  quizBrain.nextQuestion();
+                });
               },
             ),
           ),
@@ -79,14 +88,35 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked false.
+                setState(() {
+                  checkAnswer(false);
+                  quizBrain.nextQuestion();
+                });
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        Row(
+          children: iconsList,
+        )
       ],
     );
+  }
+
+  void checkAnswer(bool userChoice) {
+    bool correctAnswer = quizBrain.getQuestionAnswer();
+    if (correctAnswer == userChoice) {
+      scoreKeeper++;
+      print('User got it right!');
+      iconsList.add(
+        Icon(Icons.check, color: Colors.green),
+      );
+    } else {
+      print('User got it wrong!');
+      iconsList.add(
+        Icon(Icons.cancel, color: Colors.red),
+      );
+    }
   }
 }
 
